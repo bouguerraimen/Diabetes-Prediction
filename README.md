@@ -2,7 +2,7 @@
 
 A simple web app that predicts whether a person is diabetic from 8 medical measurements. The interface is built with HTML, CSS and JavaScript, and talks to a Support Vector Machine (SVM) model served by a Flask API.
 
-![App screenshot](screenshot.png)
+![App screenshot](interface.png)
 
 > **Disclaimer:** this project is for educational purposes only. It is not a medical diagnosis tool.
 
