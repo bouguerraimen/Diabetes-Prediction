@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&display=swap');
+
+:root {
+    --bg: #e6f4ea;
+    --bg-end: #f4fbf6;
+    --card: #b7e4c7;
+    --border: #74c69d;
+    --accent: #2d6a4f;
+    --accent-dark: #1b4332;
+    --text: #0b2e1f;
+    --muted: #3f6150;
+    --placeholder: #5c7a69;
+    --focus-ring: rgba(45, 106, 79, 0.25);
+    --shadow: rgba(27, 67, 50, 0.18);
+    --radius: 14px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    padding: 0 16px 40px;
+    background: linear-gradient(180deg, var(--bg) 0%, var(--bg-end) 100%);
+    min-height: 100vh;
+    font-family: "Josefin Sans", sans-serif;
+    color: var(--text);
+}
+
+h1 {
+    color: var(--accent-dark);
+    text-align: center;
+    margin: 48px 0 28px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+}
+
+h2 {
+    text-align: center;
+    margin: 0 0 28px;
+    font-weight: 600;
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+}
+
+form {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px;
+    background-color: var(--card);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 30px var(--shadow);
+}
+
+/* 4 colonnes sur grand écran, 2 sur tablette, 1 sur mobile */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.field { display: flex; flex-direction: column; }
+
+label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+}
+
+label small {
+    display: block;
+    font-weight: 400;
+    font-size: 0.78rem;
+    color: var(--muted);
+}
+
+input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    background: #fff;
+    font-family: inherit;
+    font-size: 1rem;
+    color: var(--text);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input::placeholder { color: var(--placeholder); opacity: 1; }
+
+input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--focus-ring);
+}
+
+/* Bordure rouge seulement après une saisie invalide */
+input:not(:placeholder-shown):invalid { border-color: #d00000; }
+
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+button {
+    padding: 12px 36px;
+    border: none;
+    border-radius: 10px;
+    background: var(--accent);
+    color: #fff;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s, opacity 0.2s;
+}
+
+button:hover { background: var(--accent-dark); }
+button:active { transform: scale(0.97); }
+button:disabled { opacity: 0.6; cursor: wait; }
+button:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
+button.secondary { background: #fff; color: var(--accent-dark); }
+button.secondary:hover { background: var(--bg); }
+
+.result {
+    margin-top: 26px;
+    padding: 18px;
+    border-radius: var(--radius);
+    text-align: center;
+    font-size: 1.3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    animation: pop 0.3s ease;
+}
+.result span { font-size: 0.95rem; }
+.result.good  { background: #f0fff4; color: #14532d; border: 2px solid var(--accent); }
+.result.bad   { background: #ffe3e3; color: #7f1d1d; border: 2px solid #d00000; }
+.result.error { background: #fff3cd; color: #664d03; border: 1px solid #ffda6a; }
+.hidden { display: none; }
+
+@keyframes pop {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: none; }
+}
+
+.disclaimer {
+    margin: 22px 0 0;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+@media (max-width: 800px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+    form { padding: 20px; }
+    .grid { grid-template-columns: 1fr; }
+    .actions { flex-direction: column; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+}

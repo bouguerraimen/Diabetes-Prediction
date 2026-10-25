@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Prediction</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Diabetes Prediction</h1>
+    </header>
+
+    <main>
+        <form id="form">
+            <h2>Enter the measurements and get an instant prediction</h2>
+
+            <div id="fields" class="grid"></div>
+
+            <div class="actions">
+                <button type="submit" id="submit">Predict</button>
+                <button type="button" class="secondary" id="clear">Clear</button>
+            </div>
+
+            <div id="result" class="result hidden" role="status"></div>
+            <p class="disclaimer">For educational purposes only. This is not a medical diagnosis.</p>
+        </form>
+    </main>
+
+    <script>
+        const API_URL = "http://127.0.0.1:5000/predict";
+
+   
+        const FEATURES = [
+            { label: "Pregnancies",       hint: "number of times",      example: "2" },
+            { label: "Glucose",           hint: "mg/dL",                example: "120" },
+            { label: "Blood pressure",    hint: "mm Hg (diastolic)",    example: "70" },
+            { label: "Skin thickness",    hint: "mm",                   example: "20" },
+            { label: "Insulin",           hint: "µU/mL",                example: "80" },
+            { label: "BMI",               hint: "kg/m²",                example: "28.5" },
+            { label: "Pedigree function", hint: "family history score", example: "0.47" },
+            { label: "Age",               hint: "years",                example: "35" }
+        ];
+
+        const form = document.getElementById("form");
+        const fields = document.getElementById("fields");
+        const result = document.getElementById("result");
+        const submitBtn = document.getElementById("submit");
+
+        // Création des champs
+        FEATURES.forEach((f, i) => {
+            const wrapper = document.createElement("div");
+            wrapper.className = "field";
+
+            const label = document.createElement("label");
+            label.htmlFor = "f" + i;
+            label.innerHTML = `${f.label} <small>${f.hint}</small>`;
+
+            const input = document.createElement("input");
+            input.type = "number";
+            input.step = "any";
+            input.min = "0";
+            input.id = "f" + i;
+            input.placeholder = "e.g. " + f.example;
+            input.required = true;
+
+            wrapper.append(label, input);
+            fields.appendChild(wrapper);
+        });
+
+      
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const features = FEATURES.map((_, i) =>
+                parseFloat(document.getElementById("f" + i).value)
+            );
+
+            result.className = "result";
+            result.textContent = "Analyzing...";
+            submitBtn.disabled = true;
+
+            try {
+                const res = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ features })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Server error");
+
+                
+                const diabetic = data.prediction === 1 || data.label === "diabetic";
+                result.className = "result " + (diabetic ? "bad" : "good");
+                result.innerHTML =
+                    `<strong>${diabetic ? "Diabetic" : "Not diabetic"}</strong>` +
+                    (data.confidence != null
+                        ? `<span>Confidence: ${(data.confidence * 100).toFixed(1)}%</span>`
+                        : "");
+            } catch (err) {
+                result.className = "result error";
+                result.textContent = "Error: " + err.message + " (is the API running?)";
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+
+      
+        document.getElementById("clear").addEventListener("click", () => {
+            form.reset();
+            result.className = "result hidden";
+        });
+    </script>
+</body>
+</html>
